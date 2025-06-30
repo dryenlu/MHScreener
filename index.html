@@ -1,0 +1,370 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Patient Medication History Screener</title>
+    <style>
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+            background-color: #f8f9fa;
+            color: #212529;
+            line-height: 1.6;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            background-color: #ffffff;
+            padding: 30px;
+            border-radius: 8px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+
+        h1 {
+            color: #0056b3;
+            text-align: center;
+            margin-bottom: 30px;
+        }
+
+        .section {
+            background-color: #fdfdff;
+            border: 1px solid #e0e0e0;
+            border-radius: 8px;
+            padding: 20px;
+            margin-bottom: 25px;
+        }
+
+        .section h2 {
+            color: #0056b3;
+            border-bottom: 2px solid #0056b3;
+            padding-bottom: 10px;
+            margin-top: 0;
+            margin-bottom: 20px;
+        }
+
+        .drug-category {
+            margin-bottom: 15px;
+        }
+
+        .category-title {
+            font-weight: bold;
+            color: #333;
+            margin-bottom: 10px;
+            border-bottom: 1px solid #eee;
+            padding-bottom: 5px;
+        }
+
+        .medication-row, .date-row {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            margin-bottom: 15px;
+        }
+
+        .medication-row label, .date-row label {
+            font-weight: 500;
+            flex-basis: 200px;
+            flex-shrink: 0;
+        }
+
+        .medication-select, input[type="date"] {
+            flex-grow: 1;
+            padding: 10px;
+            border: 1px solid #ced4da;
+            border-radius: 4px;
+            background-color: #fff;
+            font-size: 1rem;
+        }
+
+        /* Checkbox Styles */
+        #progression-checkboxes {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        .checkbox-row {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .checkbox-row input[type="checkbox"] {
+            width: 18px;
+            height: 18px;
+        }
+
+        .checkbox-row label {
+            font-weight: normal;
+        }
+
+        #result-section {
+            margin-top: 30px;
+            padding: 20px;
+            background-color: #e9ecef;
+            border-radius: 8px;
+            text-align: center;
+        }
+
+        #result-section h3 {
+            margin: 0;
+            font-size: 1.5rem;
+            color: #343a40;
+        }
+
+        #eligibility-result {
+            font-weight: bold;
+            padding: 5px 10px;
+            border-radius: 5px;
+        }
+
+        #eligibility-result.yes {
+            background-color: #28a745;
+            color: white;
+        }
+
+        #eligibility-result.no {
+            background-color: #dc3545;
+            color: white;
+        }
+
+        #eligibility-result.unknown {
+            background-color: #6c757d;
+            color: white;
+        }
+        
+        .hidden {
+            display: none;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Patient Medication History Screener</h1>
+
+        <!-- Section 0: Dates -->
+        <div class="section">
+            <h2>Dates</h2>
+            <div class="date-row">
+                <label for="randomization-date">Estimated Randomization Date:</label>
+                <input type="date" id="randomization-date">
+            </div>
+        </div>
+
+        <!-- Section 1: mHSPC -->
+        <div class="section">
+            <h2>mHSPC Setting</h2>
+            <div class="drug-category">
+                <p class="category-title">ADT</p>
+                <div class="checkbox-row">
+                    <input type="checkbox" id="adt" name="drug" value="ADT">
+                    <label for="adt">ADT</label>
+                </div>
+            </div>
+            <div class="drug-category">
+                <p class="category-title">ARPI</p>
+                <div class="checkbox-row"><input type="checkbox" id="mhspc-abiraterone" name="drug" value="Abiraterone"><label for="mhspc-abiraterone">Abiraterone</label></div>
+                <div class="checkbox-row"><input type="checkbox" id="mhspc-enzalutamide" name="drug" value="Enzalutamide"><label for="mhspc-enzalutamide">Enzalutamide</label></div>
+                <div class="checkbox-row"><input type="checkbox" id="mhspc-darolutamide" name="drug" value="Darolutamide"><label for="mhspc-darolutamide">Darolutamide</label></div>
+                <div class="checkbox-row"><input type="checkbox" id="mhspc-apalutamide" name="drug" value="Apalutamide"><label for="mhspc-apalutamide">Apalutamide</label></div>
+            </div>
+            <div class="drug-category">
+                <p class="category-title">Taxane-based Chemotherapy</p>
+                <div class="checkbox-row"><input type="checkbox" id="mhspc-docetaxel" name="drug" value="Docetaxel"><label for="mhspc-docetaxel">Docetaxel</label></div>
+            </div>
+            <div class="drug-category">
+                <p class="category-title">RLT</p>
+                <div class="checkbox-row"><input type="checkbox" id="mhspc-lu177" name="drug" value="Lu177-PSMA-RLT"><label for="mhspc-lu177">Lu177-PSMA-RLT</label></div>
+            </div>
+        </div>
+
+        <!-- Section 2: mCRPC -->
+        <div class="section">
+            <h2>mCRPC Setting</h2>
+            <div class="drug-category">
+                <p class="category-title">ARPI</p>
+                <div class="checkbox-row"><input type="checkbox" id="mcrpc-abiraterone" name="drug" value="Abiraterone"><label for="mcrpc-abiraterone">Abiraterone</label></div>
+                <div class="checkbox-row"><input type="checkbox" id="mcrpc-enzalutamide" name="drug" value="Enzalutamide"><label for="mcrpc-enzalutamide">Enzalutamide</label></div>
+                <div class="checkbox-row"><input type="checkbox" id="mcrpc-darolutamide" name="drug" value="Darolutamide"><label for="mcrpc-darolutamide">Darolutamide</label></div>
+                <div class="checkbox-row"><input type="checkbox" id="mcrpc-apalutamide" name="drug" value="Apalutamide"><label for="mcrpc-apalutamide">Apalutamide</label></div>
+            </div>
+            <div class="drug-category">
+                <p class="category-title">Taxane-based Chemotherapy</p>
+                <div class="checkbox-row"><input type="checkbox" id="mcrpc-docetaxel" name="drug" value="Docetaxel"><label for="mcrpc-docetaxel">Docetaxel</label></div>
+                <div class="checkbox-row"><input type="checkbox" id="mcrpc-cabazitaxel" name="drug" value="Cabazitaxel"><label for="mcrpc-cabazitaxel">Cabazitaxel</label></div>
+            </div>
+            <div class="drug-category">
+                <p class="category-title">Radioligand therapy</p>
+                <div class="checkbox-row">
+                    <input type="checkbox" id="ra223" name="drug" value="Ra223">
+                    <label for="ra223">Ra223</label>
+                </div>
+                <div class="date-row hidden" id="ra223-date-row">
+                     <label for="ra223-last-treatment-date">Last treatment date:</label>
+                     <input type="date" id="ra223-last-treatment-date">
+                </div>
+                <div class="checkbox-row">
+                    <input type="checkbox" id="mcrpc-lu177" name="drug" value="Lu177-PSMA-RLT">
+                    <label for="mcrpc-lu177">Lu177-PSMA-RLT</label>
+                </div>
+            </div>
+        </div>
+
+        <!-- Section 3: Disease Progression -->
+        <div class="section">
+            <h2>Disease Progression on Last Treatment</h2>
+            <div id="progression-checkboxes">
+                <div class="checkbox-row"><input type="checkbox" id="psa" name="progression" value="PSA progression"><label for="psa">PSA progression</label></div>
+                <div class="checkbox-row"><input type="checkbox" id="recist" name="progression" value="RECIST1.1 progression"><label for="recist">RECIST1.1 progression</label></div>
+                <div class="checkbox-row"><input type="checkbox" id="bone" name="progression" value="Bone scan progression"><label for="bone">Bone scan progression</label></div>
+                <div class="checkbox-row"><input type="checkbox" id="none" name="progression" value="None of the above"><label for="none">None of the above</label></div>
+            </div>
+        </div>
+
+        <!-- Result Section -->
+        <div id="result-section">
+            <h3>Eligible for Screening: <span id="eligibility-result"></span></h3>
+        </div>
+
+    </div>
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const allInputs = document.querySelectorAll('input[type="checkbox"], input[type="date"]');
+            const allCheckboxes = document.querySelectorAll('input[type="checkbox"]');
+            const drugCheckboxes = document.querySelectorAll('input[name="drug"]');
+            const noneProgressionCheckbox = document.getElementById('none');
+            const otherProgressionCheckboxes = Array.from(document.querySelectorAll('input[name="progression"]:not(#none)'));
+            const ra223Checkbox = document.getElementById('ra223');
+            const adtCheckbox = document.getElementById('adt');
+            const resultSpan = document.getElementById('eligibility-result');
+            
+            const randomizationDateInput = document.getElementById('randomization-date');
+            const ra223DateRow = document.getElementById('ra223-date-row');
+            const ra223DateInput = document.getElementById('ra223-last-treatment-date');
+
+            const drugToCategory = {
+                'Abiraterone': 'ARPI',
+                'Enzalutamide': 'ARPI',
+                'Darolutamide': 'ARPI',
+                'Apalutamide': 'ARPI',
+                'Docetaxel': 'Taxane',
+                'Cabazitaxel': 'Taxane',
+                'Lu177-PSMA-RLT': 'RLT'
+            };
+
+            function setResult(eligible) {
+                if (eligible === 'Yes') {
+                    resultSpan.textContent = 'Yes';
+                    resultSpan.className = 'yes';
+                } else if (eligible === 'No') {
+                    resultSpan.textContent = 'No';
+                    resultSpan.className = 'no';
+                } else {
+                    resultSpan.textContent = 'Unknown';
+                    resultSpan.className = 'unknown';
+                }
+            }
+
+            function checkEligibility() {
+                const anyInputEntered = Array.from(allInputs).some(i => (i.type === 'checkbox' && i.checked) || (i.type === 'date' && i.value));
+                if (!anyInputEntered) {
+                    setResult('Unknown');
+                    return;
+                }
+
+                // Rule: Ra223 date check
+                if (ra223Checkbox.checked) {
+                    const randDateStr = randomizationDateInput.value;
+                    const ra223DateStr = ra223DateInput.value;
+                    if (!randDateStr || !ra223DateStr) {
+                        setResult('No'); // If dates are required but not entered, it's a No
+                        return;
+                    }
+                    const randDate = new Date(randDateStr);
+                    const ra223Date = new Date(ra223DateStr);
+                    const sixWeeksInMillis = 6 * 7 * 24 * 60 * 60 * 1000;
+                    if ((randDate - ra223Date) < sixWeeksInMillis) {
+                        setResult('No');
+                        return;
+                    }
+                }
+
+                // Rule: If "None of the above" for progression is checked, result is "No".
+                if (noneProgressionCheckbox.checked) {
+                    setResult('No');
+                    return;
+                }
+
+                // Rule: ADT must be checked.
+                if (!adtCheckbox.checked) {
+                    setResult('No');
+                    return;
+                }
+
+                // Rule: At least one of the other 3 progression options must be checked.
+                const atLeastOneProgressionChecked = otherProgressionCheckboxes.some(box => box.checked);
+                if (!atLeastOneProgressionChecked) {
+                    setResult('No');
+                    return;
+                }
+
+                // Rule: Check if at least one drug from each required category (ARPI, Taxane, RLT) is selected.
+                const selectedCategories = new Set();
+                drugCheckboxes.forEach(checkbox => {
+                    if (checkbox.checked) {
+                        const category = drugToCategory[checkbox.value];
+                        if (category) {
+                            selectedCategories.add(category);
+                        }
+                    }
+                });
+
+                const hasARPI = selectedCategories.has('ARPI');
+                const hasTaxane = selectedCategories.has('Taxane');
+                const hasRLT = selectedCategories.has('RLT');
+
+                if (!hasARPI || !hasTaxane || !hasRLT) {
+                    setResult('No');
+                    return;
+                }
+
+                // If all checks pass, the result is "Yes".
+                setResult('Yes');
+            }
+
+            // Add event listeners to all inputs
+            allInputs.forEach(input => {
+                input.addEventListener('change', checkEligibility);
+            });
+
+            // Special handling for Ra223 checkbox to show/hide date input
+            ra223Checkbox.addEventListener('change', () => {
+                ra223DateRow.classList.toggle('hidden', !ra223Checkbox.checked);
+                if (!ra223Checkbox.checked) {
+                    ra223DateInput.value = ''; // Clear date if unchecked
+                }
+            });
+
+            // Special handling for the "None of the above" checkbox
+            noneProgressionCheckbox.addEventListener('change', () => {
+                if (noneProgressionCheckbox.checked) {
+                    otherProgressionCheckboxes.forEach(box => {
+                        box.checked = false;
+                        box.disabled = true;
+                    });
+                } else {
+                    otherProgressionCheckboxes.forEach(box => {
+                        box.disabled = false;
+                    });
+                }
+                checkEligibility();
+            });
+
+            // Initial check on page load
+            checkEligibility();
+        });
+    </script>
+</body>
+</html>
